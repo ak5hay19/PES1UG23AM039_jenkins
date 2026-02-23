@@ -3,7 +3,7 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
                 checkout scm
             }
@@ -21,6 +21,7 @@ pipeline {
             steps {
                 sh '''
                 docker rm -f backend1 backend2 || true
+
                 docker run -d --name backend1 backend-app
                 docker run -d --name backend2 backend-app
                 '''
@@ -31,8 +32,9 @@ pipeline {
             steps {
                 sh '''
                 docker rm -f nginx || true
+
                 docker run -d --name nginx -p 80:80 \
-                  -v $(pwd)/nginx/default.conf:/etc/nginx/conf.d/default.conf \
+                  -v $(pwd)/nginx:/etc/nginx/conf.d \
                   --link backend1 --link backend2 nginx
                 '''
             }
@@ -41,10 +43,10 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline executed successfully"
+            echo 'Pipeline executed successfully'
         }
         failure {
-            echo "Pipeline failed"
+            echo 'Pipeline failed'
         }
     }
 }
