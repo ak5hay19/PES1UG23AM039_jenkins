@@ -3,7 +3,7 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
                 checkout scm
             }
@@ -17,7 +17,7 @@ pipeline {
             }
         }
 
-        stage('Deploy Backend Containers') {
+        stage('Run Backend Containers') {
             steps {
                 sh '''
                 docker rm -f backend1 backend2 || true
@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('Deploy NGINX Load Balancer') {
+        stage('Run NGINX Load Balancer') {
             steps {
                 sh '''
                 docker rm -f nginx || true
@@ -40,11 +40,11 @@ pipeline {
     }
 
     post {
-        failure {
-            echo 'Pipeline failed. Check console logs for errors.'
-        }
         success {
-            echo 'Pipeline executed successfully!'
+            echo "Pipeline executed successfully"
+        }
+        failure {
+            echo "Pipeline failed"
         }
     }
 }
